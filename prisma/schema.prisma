@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Places {
+  id             Int              @id @default(autoincrement())
+  name           String
+  profile_places ProfilePlaces[]
+  user_places    UserPlaces[]
+}
+
+model Post {
+  id      Int      @id @default(autoincrement())
+  user_id Int      @unique
+  post    String[]
+  user    User     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Profile {
+  id              Int              @id @default(autoincrement())
+  user_id         Int              @unique
+  firstname       String
+  lastname        String
+  bio             String?
+  profile_picture String?
+  user            User             @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  profile_places  ProfilePlaces[]
+}
+
+model ProfilePlaces {
+  profile_id Int
+  place_id   Int
+  places     Places  @relation(fields: [place_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  profile    Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([profile_id, place_id])
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  email       String        @unique
+  password    String
+  posts       Int[]
+  post        Post?
+  profile     Profile?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user_places UserPlaces[] 
+}
+
+model UserPlaces {
+  user_id  Int
+  place_id Int
+  places   Places @relation(fields: [place_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user     User   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([user_id, place_id])
+}
