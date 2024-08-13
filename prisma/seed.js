@@ -2,7 +2,13 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function seed() {
-	for (let i = 1; i <= 7; i++) {			
+	await prisma.log.deleteMany({})
+	await prisma.picture.deleteMany({})
+	await prisma.visit.deleteMany({})
+	await prisma.location.deleteMany({})
+	await prisma.user.deleteMany({})
+
+	for (let i = 1; i <= 7; i++) {
 		const user = await prisma.user.create({
 			data: {
 				username: `user${i}`,
@@ -10,10 +16,10 @@ async function seed() {
 			},
 		})
 		console.log('User created:', user)
-		
+
 		const location = await prisma.location.create({
 			data: {
-				name: `A nice place ${i}`,
+				name: `A nice location ${i}`,
 				userVisits: {
 					create: {
 						user: {
@@ -21,27 +27,27 @@ async function seed() {
 						},
 					},
 				},
-				logs: {
+				log: {
 					create: [
 						{
-							user_id: user.id,
-							log_entry: [`Visited a nice place ${i}`],
+							userId: user.id,
+							logEntries: [`Visited a nice location ${i}`],
 						},
 					],
 				},
 				pictures: {
 					create: [
 						{
-							url: `http://example.com/A_nice_place-1.jpg ${i}`,
+							url: `http://example.com/A_nice_location-1.jpg ${i}`,
 						},
 						{
-							url: `http://example.com/A_nice_place-2.jpg ${i}`,
+							url: `http://example.com/A_nice_location-2.jpg ${i}`,
 						},
 					],
 				},
 			},
 		})
-		console.log('Place created:', place)
+		console.log('location created:', location)
 	}
 }
 
