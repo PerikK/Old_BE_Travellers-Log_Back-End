@@ -2,42 +2,44 @@ import {
 	createUserDb,
 	getUserByIdDb,
 	getAllUsersDb,
+	getUserByUsernameDb,
 } from '../domain/user.js'
+import {
+	MissingFieldsError,
+	DataNotFoundError,
+	ExistingDataError,
+} from '../errors/errors.js'
 
 const createUser = async (req, res) => {
-    const { username, password } = req.body
+	const { username, password } = req.body
 
 	if (!password || !username) {
-		return res.status(400).json({
-			error: 'Missing fields in request body',
-		})
-    }
-    
-	try {
-        const newUser = await createUserDb(username, password)
-		res.status(201).json({ created: newUser })
-	} catch (e) {
-		console.error(e)
-		res.status(400).json({ message: 'unable to create user' })
+		throw new MissingFieldsError(
+			'Both username and password must be provided in order to create a new user'
+		)
 	}
+	const existingUser = await getUserByUsernameDb(username)
+	if (existingUser) {
+		throw new ExistingDataError('This username already exists')
+	}
+
+	const newUser = await createUserDb(username, password)
+	res.status(201).json({ created: newUser })
 }
 
 const getUserById = async (req, res) => {
-    const id = Number(req.params.id)
+	const id = Number(req.params.id)
 
 	if (!id) {
-		return res.status(400).json({
-			error: 'Missing fields in request body',
-		})
-    }
-    
-    try {
-        const foundUser = await getUserByIdDb(id)
-        res.status(200).json({user: foundUser})        
-    } catch(e) {
-        console.error(e)
-        res.status(400).json({ message: 'unable to find user' })
-    }
+		throw new MissingFieldsError(
+			'ID must be provided in order to search for a user by ID'
+		)
+	}
+
+	const foundUser = await getUserByIdDb(id)
+	res.status(200).json({ user: foundUser })
 }
+
+
 
 export { createUser, getUserById }
