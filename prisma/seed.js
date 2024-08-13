@@ -3,11 +3,11 @@ const prisma = new PrismaClient
 
 async function seed() {
     const createdUser = await prisma.user.create({
-        data: {
-            email: 'test@tst.gr',
-            password: '123qwe'
-        }
-    })
+			data: {
+				username: 'tester1',
+				password: '123qwe',
+			},
+		})
     console.log('Created:',createdUser );
 }
 seed()

@@ -5,16 +5,17 @@ import {
 } from '../domain/user.js'
 
 const createUser = async (req, res) => {
-	const { email, password } = req.body
+    const { username, password } = req.body
 
-	if (!password || !email) {
+	if (!password || !username) {
 		return res.status(400).json({
 			error: 'Missing fields in request body',
 		})
-	}
+    }
+    
 	try {
-		const createdUser = await createUserDb(email, password)
-		res.status(201).json({ createdUser })
+        const newUser = await createUserDb(username, password)
+		res.status(201).json({ created: newUser })
 	} catch (e) {
 		console.error(e)
 		res.status(400).json({ message: 'unable to create user' })
@@ -23,8 +24,6 @@ const createUser = async (req, res) => {
 
 const getUserById = async (req, res) => {
     const id = Number(req.params.id)
-    // console.log(id);
-    // console.log(typeof id);
 
 	if (!id) {
 		return res.status(400).json({
@@ -34,7 +33,6 @@ const getUserById = async (req, res) => {
     
     try {
         const foundUser = await getUserByIdDb(id)
-        console.log(foundUser)
         res.status(200).json({user: foundUser})        
     } catch(e) {
         console.error(e)

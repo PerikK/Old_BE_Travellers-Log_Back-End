@@ -1,12 +1,13 @@
 import prisma from "../utils/dbClient.js";
 
-const createUserDb = async (email, password) => {
-    await prisma.user.create({
+const createUserDb = async (username, password) => {
+    const newUser = await prisma.user.create({
         data: {
-            email: email,
+            username: username,
             password: password
         }
     })
+    return newUser
 }
 
 const getUserByIdDb = async (id) => {
