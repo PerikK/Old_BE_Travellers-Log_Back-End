@@ -11,10 +11,10 @@ async function seed() {
 		})
 		console.log('User created:', user)
 		
-		const place = await prisma.places.create({
+		const location = await prisma.location.create({
 			data: {
 				name: `A nice place ${i}`,
-				user_places: {
+				userVisits: {
 					create: {
 						user: {
 							connect: { id: user.id },
@@ -43,14 +43,6 @@ async function seed() {
 		})
 		console.log('Place created:', place)
 	}
-
-	// const userPlaces = await prisma.userPlaces.findMany({
-	// 	where: {
-	// 		user_id: user.id,
-	// 	},
-	// })
-
-	// console.log('UserPlaces entries:', userPlaces)
 }
 
 seed()

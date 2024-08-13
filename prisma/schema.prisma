@@ -7,45 +7,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Places {
-  id          Int          @id @default(autoincrement())
-  name        String
-  user_places UserPlaces[]
-  pictures    Picture[]
-  logs        Log[]
+model Location {
+  id         Int       @id @default(autoincrement())
+  name       String
+  userVisits Visit[]
+  pictures   Picture[]
+  logs       Log[]
 }
 
 model Log {
   id        Int      @id @default(autoincrement())
   user_id   Int
-  place_id  Int
-  log_entry String[]
+  location_id  Int
+  log_entries String[]
   user      User     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  place     Places   @relation(fields: [place_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  location     Location @relation(fields: [location_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model User {
-  id          Int          @id @default(autoincrement())
-  username    String       @unique
+  id          Int      @id @default(autoincrement())
+  username    String   @unique
   password    String
   log_entries Log[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  user_places UserPlaces[]
+  userVisits  Visit[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
-model UserPlaces {
+model Visit {
   user_id  Int
-  place_id Int
-  places   Places @relation(fields: [place_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user     User   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  location_id Int
+  location   Location @relation(fields: [location_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user     User     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([user_id, place_id])
+  @@id([user_id, location_id])
 }
 
 model Picture {
-  id       Int    @id @default(autoincrement())
-  place_id Int
+  id       Int      @id @default(autoincrement())
+  location_id Int
   url      String
-  place    Places @relation(fields: [place_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  location Location @relation(fields: [location_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
