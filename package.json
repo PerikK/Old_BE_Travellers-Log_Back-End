@@ -5,8 +5,8 @@
   "type": "module",
   "main": "index.js",
   "prisma": {
-  "seed": "node prisma/seed.js"
-},
+    "seed": "node prisma/seed.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.js"
@@ -17,11 +17,19 @@
   "dependencies": {
     "@prisma/client": "^5.18.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-promise": "^7.1.0",
     "nodemon": "^3.1.4",
+    "prettier": "^3.3.3",
     "prisma": "^5.18.0"
   }
 }
