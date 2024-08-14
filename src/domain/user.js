@@ -16,8 +16,8 @@ const getUserByIdDb = async (id) => {
 			id: id,
 		},
 		include: {
-			logEntries: true,
-			userVisits: true
+			logs: true,
+			visits: true
 		}
 	})
 
