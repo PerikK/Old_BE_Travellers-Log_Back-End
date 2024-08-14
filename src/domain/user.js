@@ -15,6 +15,10 @@ const getUserByIdDb = async (id) => {
 		where: {
 			id: id,
 		},
+		include: {
+			logEntries: true,
+			userVisits: true
+		}
 	})
 
 	return foundUser
@@ -26,7 +30,7 @@ const getUserByUsernameDb = async (username) => {
 			username: username,
 		},
 	})
-
+	console.log(foundUser)
 	return foundUser
 }
 

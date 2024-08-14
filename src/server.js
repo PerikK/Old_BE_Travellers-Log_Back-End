@@ -1,15 +1,17 @@
 import express from 'express'
 import 'express-async-errors'
+import {MissingFieldsError, DataNotFoundError,ExistingDataError} from './errors/errors.js'
 import 'dotenv/config'
 import cors from 'cors'
 import userRouter from './routers/user.js'
-import {MissingFieldsError, DataNotFoundError,ExistingDataError} from './errors/errors.js'
+import locationRouter from './routers/location.js'
 
 const app = express()
 app.use(cors())
 app.use(express.json())
 
 app.use('/users', userRouter)
+app.use('/locations', locationRouter)
 
 app.use((error, req, res, next) => {
 	if (error instanceof MissingFieldsError) {

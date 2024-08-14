@@ -37,6 +37,12 @@ const getUserById = async (req, res) => {
 	}
 
 	const foundUser = await getUserByIdDb(id)
+	if (!foundUser) {
+		throw new DataNotFoundError(
+			'There is no user with the specified ID'
+		)
+	}
+	
 	res.status(200).json({ user: foundUser })
 }
 
