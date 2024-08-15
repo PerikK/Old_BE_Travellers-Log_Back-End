@@ -10,6 +10,7 @@ import {
 	MissingFieldsError,
 	DataNotFoundError,
 	ExistingDataError,
+	InvalidCredentialsError
 } from '../errors/errors.js'
 
 const createUser = async (req, res) => {
