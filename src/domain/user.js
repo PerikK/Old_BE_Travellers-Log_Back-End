@@ -1,11 +1,17 @@
 import prisma from '../utils/dbClient.js'
+import bcrypt from 'bcrypt'
 
 const createUserDb = async (username, password) => {
 	const newUser = await prisma.user.create({
 		data: {
 			username: username,
-			password: password,
-		},
+			password: await bcrypt.hash(password, 8)
+		}, select: {
+			id: true,
+			username: true,
+			createdAt: true,
+			updatedAt: true
+		}
 	})
 	return newUser
 }
@@ -30,7 +36,6 @@ const getUserByUsernameDb = async (username) => {
 			username: username,
 		},
 	})
-	console.log(foundUser)
 	return foundUser
 }
 
