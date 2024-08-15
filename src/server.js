@@ -5,6 +5,7 @@ import 'dotenv/config'
 import cors from 'cors'
 import userRouter from './routers/user.js'
 import locationRouter from './routers/location.js'
+import visitRouter from './routers/visit.js'
 
 const app = express()
 app.use(cors())
@@ -12,6 +13,7 @@ app.use(express.json())
 
 app.use('/users', userRouter)
 app.use('/locations', locationRouter)
+app.use('/visits', visitRouter)
 
 app.use((error, req, res, next) => {
 	if (error instanceof MissingFieldsError) {

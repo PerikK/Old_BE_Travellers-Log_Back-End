@@ -19,7 +19,7 @@ const createVisitDb = async (
 						},
 					}
 				: undefined,
-			pictures: picture
+			pictures: pictureUrl
 				? {
 						create: {
 							url: pictureUrl,
@@ -29,18 +29,43 @@ const createVisitDb = async (
 					}
 				: undefined,
 		},
-    })
-    return newVisit
+		include: {
+			logs: true,
+			pictures: true,
+			location: {
+				select: { name: true },
+			},
+		},
+	})
+	return newVisit
 }
 
 const getVisitsByUserDb = async (userId) => {
-    const userVisits = await prisma.visit.findMany({
-        where: {
-            userId: userId
-        }
-    })
-    return userVisits
+	const userVisits = await prisma.visit.findMany({
+		where: {
+			userId: userId,
+		},
+		include: {
+			location: {
+				select: {
+					name: true,
+				},
+			},
+		},
+	})
+	return userVisits
 }
 
+const existingVisitDb = async (userId, locationName) => {
+	const existingVisit = await prisma.visit.findFirst({
+		where: {
+			userId: userId,
+			location: {
+				name: locationName,
+			},
+		},
+	})
+	return existingVisit
+}
 
-export { createVisitDb, getVisitsByUserDb }
+export { createVisitDb, getVisitsByUserDb, existingVisitDb }
