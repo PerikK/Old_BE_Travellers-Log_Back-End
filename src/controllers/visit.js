@@ -1,4 +1,3 @@
-import prisma from '../utils/dbClient.js'
 import {
 	createVisitDb,
 	existingVisitDb,
@@ -15,23 +14,11 @@ import {
 	ExistingDataError,
 } from '../errors/errors.js'
 
-// const usersLocations = await getVisitsByUserDb(userId)
-// const locationName = location.name
-// console.log('location', location);
-// console.log('ULLLLLLLLL',usersLocations);
-// console.log('name', locationName);
-// const location = await prisma.location.findUnique({
-// 	where: { name: name },
-// })
-// const existingVisit = await prisma.visit.findFirst({
-// 	where: {
-// 		userId: userId,
-// 		locationId: location.id,
-// 	},
-// })
 const createVisit = async (req, res) => {
-	const { userId, name, logEntry, pictureUrl } = req.body
-	console.log(typeof userId, name, logEntry, pictureUrl)
+    const { userId, name, logEntry, pictureUrl } = req.body
+    if (!userId || !name) {
+        throw new MissingFieldsError('User and location name must be provided in order to add a new visit')
+    }
 	const user = await getUserByIdDb(Number(userId))
 	if (!user) {
 		throw new DataNotFoundError(
