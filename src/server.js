@@ -1,6 +1,6 @@
 import express from 'express'
 import 'express-async-errors'
-import {MissingFieldsError, DataNotFoundError,ExistingDataError} from './errors/errors.js'
+import {MissingFieldsError, DataNotFoundError,ExistingDataError, InvalidCredentialsError} from './errors/errors.js'
 import 'dotenv/config'
 import cors from 'cors'
 import userRouter from './routers/user.js'
@@ -18,6 +18,9 @@ app.use('/visits', visitRouter)
 app.use((error, req, res, next) => {
 	if (error instanceof MissingFieldsError) {
 		return res.status(400).json({ error: error.message })
+	}
+	if (error instanceof InvalidCredentialsError) {
+		return res.status(401).json({error: error.message})
 	}
 	if (error instanceof DataNotFoundError) {
 		return res.status(404).json({ error: error.message })
