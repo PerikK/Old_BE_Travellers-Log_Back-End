@@ -30,11 +30,11 @@ const createVisitDb = async (
 				: undefined,
 		},
 		include: {
-			logs: true,
-			pictures: true,
 			location: {
 				select: { name: true },
 			},
+			logs: true,
+			pictures: true,
 		},
 	})
 	return newVisit

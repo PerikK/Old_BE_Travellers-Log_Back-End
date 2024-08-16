@@ -66,8 +66,17 @@ const getLocationByUserDb = async (userId) => {
 			},
 		},
 		include: {
-			pictures: true,
-			logs: true,
+			pictures: {
+				select: {
+					url: true,
+					createdAt: true
+				}
+			},
+			logs: {
+				select: {
+					logEntries: true
+				}
+			}
 		},
 	})
 	return userLocations

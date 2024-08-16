@@ -58,7 +58,7 @@ const getLocationByName = async (req, res) => {
 			'There is no location with the specified name'
 		)
     }
-    res.status(200).json({Location: foundLocation})    
+    res.status(200).json({location: foundLocation})    
 }
 
 export { createLocation, getLocationByUser, getLocationByName }

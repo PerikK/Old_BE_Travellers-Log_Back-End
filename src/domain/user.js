@@ -22,9 +22,18 @@ const getUserByIdDb = async (id) => {
 			id: id,
 		},
 		include: {
-			logs: true,
-			visits: true
-		}
+			visits: {
+				include: {
+					location: {
+						include: {
+							logs: true,
+							pictures: true
+						}
+					},
+					
+				},
+			},
+		},
 	})
 
 	return foundUser
