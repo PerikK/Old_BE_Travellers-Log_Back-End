@@ -1,7 +1,9 @@
 import {
 	createVisitDb,
 	existingVisitDb,
+	getVisitByIdDb,
 	getVisitsByUserDb,
+	updateVisitByIdDb,
 } from '../domain/visit.js'
 import { getUserByUsernameDb, getUserByIdDb } from '../domain/user.js'
 import {
@@ -52,4 +54,26 @@ const createVisit = async (req, res) => {
 	res.status(201).json({ visit_created: newVisit })
 }
 
-export { createVisit }
+const getVisitsByUser = async (req, res) => {
+	const userId = Number(req.params.id)
+	const userVisits = await getVisitsByUserDb(userId)
+	res.status(200).json({user_visits: userVisits})
+}
+
+const updateVisit = async (req, res) => {
+	const id = Number(req.params.id)
+	const { logEntry, pictureUrl } = req.body
+	const visit = await getVisitByIdDb(id)
+
+	if (!visit) {
+		throw new DataNotFoundError('There is no Visit with this ID')
+	}
+	if (!logEntry && !pictureUrl) {
+		throw new MissingFieldsError("You must provide a log entry or a picture or both in order to update your visit")
+	}
+
+	const updatedVisit = await updateVisitByIdDb(visit.id, logEntry, pictureUrl)
+	res.status(200).json({updated_visit: updatedVisit})
+}
+
+export { createVisit, getVisitsByUser, updateVisit }
