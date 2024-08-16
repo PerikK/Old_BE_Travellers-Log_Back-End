@@ -13,17 +13,18 @@ import {
 
 const createLocation = async (req, res) => {
 	const { userId, name, pictureUrl, logEntry } = req.body
+	if (!name) {
+		throw new MissingFieldsError(
+			'A name must be provided in order to add a new location'
+		)
+	}
 	const user = await getUserByIdDb(Number(userId))
 	if (!user) {
 		throw new DataNotFoundError(
 			'There is no user with the specified ID'
 		)
 	}
-	if (!name) {
-		throw new MissingFieldsError(
-			'A name must be provided in order to add a new location'
-		)
-	}
+	
 	const newLocation = await createLocationDb(
 		user.id,
 		name,
