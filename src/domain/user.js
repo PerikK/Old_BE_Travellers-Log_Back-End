@@ -1,17 +1,20 @@
 import prisma from '../utils/dbClient.js'
 import bcrypt from 'bcrypt'
 
-const createUserDb = async (username, password) => {
+const createUserDb = async (username, password) => {	
+	const hashedPassword = await bcrypt.hash(password, 8)
 	const newUser = await prisma.user.create({
 		data: {
 			username: username,
-			password: await bcrypt.hash(password, 8)
-		}, select: {
+			password: hashedPassword,
+			// password: await bcrypt.hash(password, 8)
+		},
+		select: {
 			id: true,
 			username: true,
 			createdAt: true,
-			updatedAt: true
-		}
+			updatedAt: true,
+		},
 	})
 	return newUser
 }

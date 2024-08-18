@@ -69,14 +69,15 @@ const logInUser = async (req, res) => {
 		password,
 		existingUser.password
 	)
+
 	if (!validPass) {
 		throw new InvalidCredentialsError(
 			'Invalid Username OR Password. Access Denied!!!'
 		)
 	}
 
-	const payload = { username: existingUser.username }
-	const token = jwt.sign(payload, process.env.JWT_SECRET)
+	const payload = { username: existingUser.username, id: existingUser.id }
+	const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: '30d'})
 	res.status(200).json({ token })
 }
 
