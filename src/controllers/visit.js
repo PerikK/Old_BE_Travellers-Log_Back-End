@@ -16,40 +16,43 @@ import {
 	ExistingDataError,
 } from '../errors/errors.js'
 
+
+
 const createVisit = async (req, res) => {
-    const { userId, name, logEntry, pictureUrl } = req.body
-    if (!userId || !name) {
-        throw new MissingFieldsError('User and location name must be provided in order to add a new visit')
-    }
+	const { userId, locationName, logEntries, pictureUrls } = req.body
+	console.log('Controller Input', userId, locationName, logEntries, pictureUrls)
+	if (!userId || !locationName) {
+		throw new MissingFieldsError(
+			'User and location name must be provided in order to add a new visit'
+		)
+	}
 	const user = await getUserByIdDb(Number(userId))
 	if (!user) {
 		throw new DataNotFoundError(
 			'There is no user with the specified ID'
 		)
 	}
-	const location = await getLocationByNameDB(name)
+	const location = await getLocationByNameDB(locationName)
+	console.log('location in contr', location)
 	if (location) {
-		const existingVisit = await existingVisitDb(user.id, name)
+		const existingVisit = await existingVisitDb(user.id, locationName)
 		if (existingVisit) {
 			throw new ExistingDataError(
 				'This location already exists in your Travel Log. Maybe you want to update it?'
 			)
 		}
-	} else {
+	}
 		const newLocation = await createLocationDb(
 			userId,
-			name,
-			logEntry,
-			pictureUrl
+			locationName
 		)
-		res.status(201).json({ location_created: newLocation })
-		return
-	}
+
+	
 	const newVisit = await createVisitDb(
 		userId,
-		location.id,
-		logEntry,
-		pictureUrl
+		locationName,
+		logEntries,
+		pictureUrls
 	)
 	res.status(201).json({ visit_created: newVisit })
 }
@@ -57,7 +60,7 @@ const createVisit = async (req, res) => {
 const getVisitsByUser = async (req, res) => {
 	const userId = Number(req.params.id)
 	const userVisits = await getVisitsByUserDb(userId)
-	res.status(200).json({user_visits: userVisits})
+	res.status(200).json({ user_visits: userVisits })
 }
 
 const updateVisit = async (req, res) => {
@@ -69,11 +72,17 @@ const updateVisit = async (req, res) => {
 		throw new DataNotFoundError('There is no Visit with this ID')
 	}
 	if (!logEntry && !pictureUrl) {
-		throw new MissingFieldsError("You must provide a log entry or a picture or both in order to update your visit")
+		throw new MissingFieldsError(
+			'You must provide a log entry or a picture or both in order to update your visit'
+		)
 	}
 
-	const updatedVisit = await updateVisitByIdDb(visit.id, logEntry, pictureUrl)
-	res.status(200).json({updated_visit: updatedVisit})
+	const updatedVisit = await updateVisitByIdDb(
+		visit.id,
+		logEntry,
+		pictureUrl
+	)
+	res.status(200).json({ updated_visit: updatedVisit })
 }
 
 export { createVisit, getVisitsByUser, updateVisit }

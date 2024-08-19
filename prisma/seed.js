@@ -34,21 +34,32 @@ async function seed() {
 		})
 		console.log('Visit created:', visit)
 
-		await prisma.picture.createMany({
-			data: [
-				{
-					url: `http://example.com/A_nice_location-1.jpg ${i}`,
-					userId: user.id,
-					locationId: location.id,
-					visitId: visit.id,
-				},
-				{
-					url: `http://example.com/A_nice_location-2.jpg ${i}`,
-					userId: user.id,
-					locationId: location.id,
-					visitId: visit.id,
-				},
-			],
+		// await prisma.picture.createMany({
+		// 	data: [
+		// 		{
+		// 			url: `http://example.com/A_nice_location-1.jpg ${i}`,
+		// 			userId: user.id,
+		// 			locationId: location.id,
+		// 			visitId: visit.id,
+		// 		},
+		// 		{
+		// 			url: `http://example.com/A_nice_location-2.jpg ${i}`,
+		// 			userId: user.id,
+		// 			locationId: location.id,
+		// 			visitId: visit.id,
+		// 		},
+		// 	],
+		// })
+		await prisma.picture.create({
+			data: {
+				pictureUrl: [
+					`http://example.com/A_nice_location-1.jpg ${i}`,
+					`http://example.com/A_nice_location-2.jpg ${i}`,
+				],
+				userId: user.id,
+				locationId: location.id,
+				visitId: visit.id,
+			},
 		})
 		console.log('Pictures created for visit:', visit)
 

@@ -12,7 +12,7 @@ import {
 } from '../errors/errors.js'
 
 const createLocation = async (req, res) => {
-	const { userId, name, pictureUrl, logEntry } = req.body
+	const { userId, name} = req.body
 	if (!name) {
 		throw new MissingFieldsError(
 			'A name must be provided in order to add a new location'

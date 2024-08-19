@@ -39,7 +39,13 @@ const getUserByIdDb = async (id) => {
 		},
 	})
 
-	return foundUser
+	// return foundUser
+		if (foundUser) {
+			const { password, ...userWithoutPassword } = foundUser
+			return userWithoutPassword
+		}
+
+		return null
 }
 
 const getUserByUsernameDb = async (username) => {

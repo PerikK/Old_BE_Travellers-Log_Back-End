@@ -1,33 +1,33 @@
 import prisma from '../utils/dbClient.js'
 
+
 const createVisitDb = async (
 	userId,
-	locationId,
-	logEntry,
-	pictureUrl
+	locationName,
+	logEntries = [],
+	pictureUrls = []
 ) => {
+	console.log('createVisitDb called with:', {
+		userId,
+		locationName,
+		logEntries,
+		pictureUrls,
+	})
+
+	let location = await prisma.location.findUnique({
+		where: { name: locationName },
+	})
+
+	if (!location) {
+		location = await prisma.location.create({
+			data: { name: locationName },
+		})
+	}
+
 	const newVisit = await prisma.visit.create({
 		data: {
 			userId: userId,
-			locationId: locationId,
-			logs: logEntry
-				? {
-						create: {
-							logEntries: [logEntry],
-							userId: userId,
-							locationId: locationId,
-						},
-					}
-				: undefined,
-			pictures: pictureUrl
-				? {
-						create: {
-							url: pictureUrl,
-							userId: userId,
-							locationId: locationId,
-						},
-					}
-				: undefined,
+			locationId: location.id,
 		},
 		include: {
 			location: {
@@ -37,8 +37,96 @@ const createVisitDb = async (
 			pictures: true,
 		},
 	})
-	return newVisit
+
+	console.log('New visit created:', newVisit)
+
+	if (logEntries.length > 0) {
+		const logData = logEntries.map((entry) => ({
+			logEntries: [entry],
+			userId: userId,
+			locationId: location.id,
+			visitId: newVisit.id,
+		}))
+
+		await prisma.log.createMany({
+			data: logData,
+		})
+
+		console.log('Log entries created:', logData)
+	}
+
+	if (pictureUrls.length > 0) {
+		const pictureData = pictureUrls.map((url) => ({
+			pictureUrl: [url], // Ensure this is an array
+			userId: userId,
+			locationId: location.id,
+			visitId: newVisit.id,
+		}))
+
+		await prisma.picture.createMany({
+			data: pictureData,
+		})
+
+		console.log('Pictures created:', pictureData)
+	}
+
+	const updatedVisit = await prisma.visit.findUnique({
+		where: { id: newVisit.id },
+		include: {
+			location: {
+				select: { name: true },
+			},
+			logs: true,
+			pictures: true,
+		},
+	})
+
+	console.log('Updated visit:', updatedVisit)
+
+	return updatedVisit
 }
+
+// const createVisitDb = async (
+// 	userId,
+// 	locationId,
+// 	logEntry,
+// 	pictureUrl
+// ) => {
+// 	const newVisit = await prisma.visit.create({
+// 		data: {
+// 			userId: userId,
+// 			locationId: locationId,
+// 			logs: logEntry
+// 				? {
+// 						create: {
+// 							logEntries: [logEntry],
+// 							userId: userId,
+// 							locationId: locationId,
+// 						},
+// 					}
+// 				: undefined,
+// 			pictures: pictureUrl
+// 				? {
+// 						create: {
+// 							pictureUrl: [pictureUrl],
+// 							userId: userId,
+// 							locationId: locationId,
+// 						},
+// 					}
+// 				: undefined,
+// 		},
+// 		include: {
+// 			location: {
+// 				select: { name: true },
+// 			},
+// 			logs: true,
+// 			pictures: true,
+// 		},
+// 	})
+// 	return newVisit
+// }
+
+
 
 const getVisitsByUserDb = async (userId) => {
 	const userVisits = await prisma.visit.findMany({
@@ -55,6 +143,7 @@ const getVisitsByUserDb = async (userId) => {
 			},
 		},
 	})
+	console.log('RUN GET');
 	return userVisits
 }
 
@@ -132,7 +221,7 @@ const updateVisitByIdDb = async (id, logEntry, pictureUrl) => {
 	if (pictureUrl) {
 		updateData.pictures = {
 			create: {
-				url: pictureUrl,
+				pictureUrl: [pictureUrl],
 				userId: visitToUpdate.userId,
 				locationId: visitToUpdate.locationId,
 			},
